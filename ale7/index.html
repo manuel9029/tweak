@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Social</title>
+    <link rel="stylesheet" href="index.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+       
+        <header id="header">
+            <div class="logo">RedSocial</div>
+            <div class="profile-info">
+                <span id="usernameHeader">Invitado</span>
+                <img id="profilePicture" src="https://via.placeholder.com/40" alt="Perfil">
+            </div>
+        </header>
+
+     
+        <div id="registerView" class="view">
+            <div class="register-container">
+                <h2>¡Bienvenido a Tweak</h2>
+                <p>Por favor, regístrate para continuar</p>
+                
+                <div class="form-group">
+                    <label for="registerUsername">Nombre de usuario:</label>
+                    <input type="text" id="registerUsername" placeholder="Tu nombre de usuario">
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPhone">Número de teléfono:</label>
+                    <input type="tel" id="registerPhone" placeholder="+123456789">
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerProfilePic">Foto de perfil:</label>
+                    <input type="file" id="registerProfilePic" accept="image/*">
+                    <div id="profilePreview" class="image-preview"></div>
+                </div>
+                
+                <button onclick="registerUser()">Registrarme</button>
+            </div>
+        </div>
+    
+        <div id="homeView" class="view">
+            <h1>Bienvenido a Tweak</h1>
+            <p>¡Hola <span id="welcomeUsername">Usuario</span>!</p>
+            <button onclick="changeView('posts')" class="main-button">Ver Publicaciones</button>
+        </div>
+        
+
+        <div id="postsView" class="view">
+            <div class="new-post">
+                <div class="post-header">
+                    <img id="postProfilePic" src="https://via.placeholder.com/40" alt="Perfil" class="post-profile-pic">
+                    <span id="postUsername">Usuario</span>
+                </div>
+                <textarea id="postContent" placeholder="¿Qué estás pensando?"></textarea>
+                <div id="imagePreview" class="image-preview"></div>
+                <div class="post-controls">
+                    <label for="postImage" class="custom-file-upload">
+                        <i class="fas fa-image"></i> Foto
+                    </label>
+                    <input type="file" id="postImage" accept="image/*">
+                    <button onclick="addPost()" class="publish-btn">Publicar</button>
+                </div>
+            </div>
+            <div id="postsContainer"></div>
+        </div>
+        
+     
+        <div id="profileView" class="view">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <img id="profilePagePicture" src="https://via.placeholder.com/120" alt="Perfil" class="large-profile-pic">
+                    <h2 id="profileUsername">Usuario</h2>
+                </div>
+                <div class="profile-details">
+                    <p><i class="fas fa-phone"></i> <span id="profilePhoneNumber">+123456789</span></p>
+                    <p><i class="fas fa-newspaper"></i> <span id="postCount">0</span> publicaciones</p>
+                </div>
+            </div>
+        </div>
+   
+        <div id="settingsView" class="view">
+            <h2>Configuración</h2>
+            <div class="settings-container">
+                
+                
+                <div class="settings-section">
+                    <h3>Privacidad y Seguridad</h3>
+                    <ul class="settings-list">
+                        <li class="settings-item" onclick="showInfoPanel('privacy-control')">
+                            <span>Control de privacidad</span>
+                            <i class="arrow-icon">›</i>
+                        </li>
+                        <li class="settings-item" onclick="showInfoPanel('visibility-settings')">
+                            <span>Configuración de visibilidad</span>
+                            <i class="arrow-icon">›</i>
+                        </li>
+                    
+                    </ul>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Seguridad Avanzada</h3>
+                    <ul class="settings-list">
+                        <li class="settings-item" onclick="showInfoPanel('two-factor')">
+                            <span>Verificación en dos pasos</span>
+                            <i class="arrow-icon">›</i>
+                        </li>
+                        <li class="settings-item" onclick="showInfoPanel('manage-devices')">
+                            <span>Administrar dispositivos conectados</span>
+                            <i class="arrow-icon">›</i>
+                        </li>
+                        <li class="settings-item" onclick="showInfoPanel('account-activity')">
+                            <span>Actividad de la cuenta</span>
+                            <i class="arrow-icon">›</i>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Información Legal y Ayuda</h3>
+                    <ul class="settings-list">
+                        <li class="settings-item" onclick="showInfoPanel('terms')">
+                            <span>Términos y Condiciones</span>
+                            <i class="arrow-icon">›</i>
+                        </li>
+                        <li class="settings-item" onclick="showInfoPanel('help-center')">
+                            <span>Centro de Ayuda</span>
+                            <i class="arrow-icon">›</i>
+                        </li>
+                        <li class="settings-item" onclick="showInfoPanel('privacy-policy')">
+                            <span>Política de Privacidad</span>
+                            <i class="arrow-icon">›</i>
+                        </li>
+                        <li class="settings-item" onclick="showInfoPanel('report-problem')">
+                            <span>Reportar un problema</span>
+                            <i class="arrow-icon">›</i>
+                        </li>
+                    </ul>
+                </div>
+                <ul class="settings-list">
+                    <li class="settings-item" onclick="showThemeSettings()">Cambiar Tema <span class="arrow-icon">→</span></li>
+                    <li class="settings-item" onclick="showPrivacySettings()">Configuración de Privacidad <span class="arrow-icon">→</span></li>
+
+                    
+                    <li class="settings-item" onclick="showSecuritySettings()">Seguridad <span class="arrow-icon">→</span></li>
+                </ul>
+                
+            </div>
+            
+         
+            <div id="infoPanel" class="info-panel">
+                <div class="info-panel-header">
+                    <h3 id="infoPanelTitle">Título</h3>
+                    <button onclick="hideInfoPanel()" class="close-button">×</button>
+                </div>
+                <div id="infoPanelContent" class="info-panel-content">
+                  
+                </div>
+                <div class="info-panel-footer">
+                    <button onclick="hideInfoPanel()" class="secondary-button">Volver</button>
+                </div>
+            </div>
+        </div>
+        
+        
+      
+        <nav id="bottomNav">
+            <ul>
+                <li id="homeBtn" onclick="changeView('home')"><i class="fas fa-home"></i></li>
+                <li id="postsBtn" onclick="changeView('posts')"><i class="fas fa-images"></i></li>
+                <li id="profileBtn" onclick="changeView('profile')"><i class="fas fa-user"></i></li>
+                <li id="settingsBtn" onclick="changeView('settings')"><i class="fas fa-cogs"></i></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
