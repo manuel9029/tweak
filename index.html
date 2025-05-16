@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorio Escolar Inteligente</title>
+    <style>
+        :root {
+            --color-primary: #ffb6c1;
+            --color-secondary: #b0e0e6;
+            --color-accent: #ffd700;
+            --color-background: #f5f5f5;
+            --color-text: #333;
+            --color-high: #ffcccc;
+            --color-medium: #ffffcc;
+            --color-low: #ccffcc;
+            --border-radius: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--color-background);
+            color: var(--color-text);
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: var(--color-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tasks-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+        
+        .priority-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .priority-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .priority-option.high {
+            background-color: var(--color-high);
+        }
+        
+        .priority-option.medium {
+            background-color: var(--color-medium);
+        }
+        
+        .priority-option.low {
+            background-color: var(--color-low);
+        }
+        
+        .priority-option.selected {
+            border-color: var(--color-text);
+            font-weight: bold;
+        }
+        
+        button {
+            background-color: var(--color-secondary);
+            color: var(--color-text);
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            width: 100%;
+            font-size: 1rem;
+        }
+        
+        button:hover {
+            background-color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+        
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .task-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .task-priority {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        
+        .task-priority.high {
+            background-color: var(--color-high);
+        }
+        
+        .task-priority.medium {
+            background-color: var(--color-medium);
+        }
+        
+        .task-priority.low {
+            background-color: var(--color-low);
+        }
+        
+        .task-content {
+            overflow: hidden;
+        }
+        
+        .task-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .task-details {
+            display: flex;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .task-detail {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .task-action {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: auto;
+            padding: 5px;
+            color: #666;
+            transition: all 0.2s;
+        }
+        
+        .task-action:hover {
+            color: var(--color-primary);
+            transform: scale(1.2);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background-color: var(--color-secondary);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        
+        .empty-state img {
+            width: 150px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .task-item {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Notificaciones */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--color-accent);
+            color: var(--color-text);
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease-out;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .filter-sort {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .filter-sort select {
+            flex: 1;
+        }
+
+        /* Fechas próximas con estilo distintivo */
+        .task-date.urgent {
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+
+        /* Badge para tareas próximas */
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📚 Recordatorio Escolar Inteligente</h1>
+        <p>Organiza tus tareas y exámenes de forma inteligente</p>
+    </header>
+    
+    <div class="container">
+        <div class="form-container">
+            <h2>Nueva Tarea</h2>
+            <form id="task-form">
+                <div class="form-group">
+                    <label for="task-title">Título de la tarea</label>
+                    <input type="text" id="task-title" required placeholder="Ej: Informe de Biología">
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-subject">Materia</label>
+                    <select id="task-subject" required>
+                        <option value="" disabled selected>Selecciona una materia</option>
+                        <option value="Matemáticas">Matemáticas</option>
+                        <option value="Español">Español</option>
+                        <option value="Ciencias">Ciencias</option>
+                        <option value="Historia">Historia</option>
+                        <option value="Geografía">Geografía</option>
+                        <option value="Inglés">Inglés</option>
+                        <option value="Artes">Artes</option>
+                        <option value="Educación Física">Educación Física</option>
+                        <option value="Otra">Otra</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-date">Fecha de entrega</label>
+                    <input type="date" id="task-date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-time">Hora de entrega</label>
+                    <input type="time" id="task-time" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Prioridad</label>
+                    <div class="priority-selector">
+                        <div class="priority-option low" data-priority="low" onclick="selectPriority('low')">
+                            Baja
+                        </div>
+                        <div class="priority-option medium" data-priority="medium" onclick="selectPriority('medium')">
+                            Media
+                        </div>
+                        <div class="priority-option high" data-priority="high" onclick="selectPriority('high')">
+                            Alta
+                        </div>
+                    </div>
+                    <input type="hidden" id="task-priority" value="medium">
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-difficulty">Dificultad</label>
+                    <select id="task-difficulty" required>
+                        <option value="easy">Fácil</option>
+                        <option value="medium" selected>Media</option>
+                        <option value="hard">Difícil</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-description">Descripción (opcional)</label>
+                    <textarea id="task-description" rows="3" placeholder="Detalles importantes de la tarea..."></textarea>
+                </div>
+                
+                <button type="submit">Guardar Tarea</button>
+            </form>
+        </div>
+        
+        <div class="tasks-container">
+            <h2>Mis Tareas</h2>
+            
+            <div class="filter-sort">
+                <select id="filter-subject">
+                    <option value="all">Todas las materias</option>
+                    <option value="Matemáticas">Matemáticas</option>
+                    <option value="Español">Español</option>
+                    <option value="Ciencias">Ciencias</option>
+                    <option value="Historia">Historia</option>
+                    <option value="Geografía">Geografía</option>
+                    <option value="Inglés">Inglés</option>
+                    <option value="Artes">Artes</option>
+                    <option value="Educación Física">Educación Física</option>
+                    <option value="Otra">Otra</option>
+                </select>
+                
+                <select id="sort-by">
+                    <option value="date">Ordenar por fecha</option>
+                    <option value="priority">Ordenar por prioridad</option>
+                    <option value="subject">Ordenar por materia</option>
+                </select>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="pending" onclick="switchTab('pending')">Pendientes</div>
+                <div class="tab" data-tab="completed" onclick="switchTab('completed')">Completadas</div>
+                <div class="tab" data-tab="all" onclick="switchTab('all')">Todas</div>
+            </div>
+            
+            <div id="task-list" class="task-list">
+                <!-- Las tareas se generarán dinámicamente aquí -->
+                <div class="empty-state">
+                    <img src="/api/placeholder/150/150" alt="No hay tareas">
+                    <h3>No hay tareas pendientes</h3>
+                    <p>Añade una nueva tarea para empezar a organizarte</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification">
+        Notificación de ejemplo
+    </div>
+    
+    <script>
+        // Estado global de la aplicación
+        const state = {
+            tasks: [],
+            filter: {
+                tab: 'pending',
+                subject: 'all'
+            },
+            sort: 'date',
+            selectedPriority: 'medium'
+        };
+        
+        // Elementos DOM
+        const taskForm = document.getElementById('task-form');
+        const taskList = document.getElementById('task-list');
+        const filterSubject = document.getElementById('filter-subject');
+        const sortBy = document.getElementById('sort-by');
+        const tabs = document.querySelectorAll('.tab');
+        const notification = document.getElementById('notification');
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTasks();
+            checkUpcomingTasks();
+            
+            // Configurar manejadores de eventos
+            taskForm.addEventListener('submit', handleTaskSubmit);
+            filterSubject.addEventListener('change', handleFilterChange);
+            sortBy.addEventListener('change', handleSortChange);
+            
+            // Comprobar si hay notificaciones pendientes (para simulación)
+            checkNotifications();
+            
+            // Comprobar tareas de ejemplo 
+            if (state.tasks.length === 0) {
+                addExampleTasks();
+            }
+        });
+        
+        // Cargar tareas del almacenamiento local
+        function loadTasks() {
+            const savedTasks = localStorage.getItem('schoolTasks');
+            if (savedTasks) {
+                state.tasks = JSON.parse(savedTasks);
+                renderTasks();
+            }
+        }
+        
+        // Guardar tareas en el almacenamiento local
+        function saveTasks() {
+            localStorage.setItem('schoolTasks', JSON.stringify(state.tasks));
+        }
+        
+        // Manejar el envío del formulario de tareas
+        function handleTaskSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('task-title').value;
+            const subject = document.getElementById('task-subject').value;
+            const date = document.getElementById('task-date').value;
+            const time = document.getElementById('task-time').value;
+            const priority = document.getElementById('task-priority').value;
+            const difficulty = document.getElementById('task-difficulty').value;
+            const description = document.getElementById('task-description').value;
+            
+            if (!title || !subject || !date || !time) {
+                showNotification('Por favor completa todos los campos obligatorios');
+                return;
+            }
+            
+            // Crear nueva tarea
+            const newTask = {
+                id: Date.now().toString(),
+                title,
+                subject,
+                dateTime: `${date}T${time}`,
+                priority,
+                difficulty,
+                description,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Añadir tarea al estado
+            state.tasks.push(newTask);
+            saveTasks();
+            renderTasks();
+            
+            // Calcular tiempo de notificación basado en dificultad y prioridad
+            scheduleNotification(newTask);
+            
+            // Limpiar formulario
+            taskForm.reset();
+            selectPriority('medium');
+            
+            showNotification('¡Tarea agregada correctamente!');
+        }
+        
+        // Renderizar tareas basadas en filtros y ordenamiento
+        function renderTasks() {
+            // Filtrar tareas
+            let filteredTasks = state.tasks;
+            
+            // Filtrar por pestaña
+            if (state.filter.tab === 'pending') {
+                filteredTasks = filteredTasks.filter(task => !task.completed);
+            } else if (state.filter.tab === 'completed') {
+                filteredTasks = filteredTasks.filter(task => task.completed);
+            }
+            
+            // Filtrar por materia
+            if (state.filter.subject !== 'all') {
+                filteredTasks = filteredTasks.filter(task => task.subject === state.filter.subject);
+            }
+            
+            // Ordenar tareas
+            if (state.sort === 'date') {
+                filteredTasks.sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+            } else if (state.sort === 'priority') {
+                const priorityOrder = { 'high': 0, 'medium': 1, 'low': 2 };
+                filteredTasks.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+            } else if (state.sort === 'subject') {
+                filteredTasks.sort((a, b) => a.subject.localeCompare(b.subject));
+            }
+            
+            // Renderizar tareas
+            if (filteredTasks.length === 0) {
+                taskList.innerHTML = `
+                    <div class="empty-state">
+                        <img src="/api/placeholder/150/150" alt="No hay tareas">
+                        <h3>No hay tareas ${state.filter.tab === 'pending' ? 'pendientes' : state.filter.tab === 'completed' ? 'completadas' : ''}</h3>
+                        <p>${state.filter.tab === 'pending' ? 'Añade una nueva tarea para empezar a organizarte' : state.filter.tab === 'completed' ? 'Completa algunas tareas para verlas aquí' : 'Añade tareas para empezar'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Generar HTML de tareas
+            taskList.innerHTML = filteredTasks.map(task => {
+                const taskDate = new Date(task.dateTime);
+                const formattedDate = taskDate.toLocaleDateString('es-ES', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric' 
+                });
+                const formattedTime = taskDate.toLocaleTimeString('es-ES', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                // Calcular si la tarea está próxima (menos de 2 días)
+                const isUrgent = isTaskUrgent(task);
+                const urgentClass = isUrgent ? 'urgent' : '';
+                const urgentBadge = isUrgent ? '<span class="badge">Urgente</span>' : '';
+                
+                return `
+                    <div class="task-item" data-id="${task.id}">
+                        ${urgentBadge}
+                        <div class="task-priority ${task.priority}"></div>
+                        <div class="task-content">
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-details">
+                                <span class="task-detail">📚 ${task.subject}</span>
+                                <span class="task-detail task-date ${urgentClass}">📅 ${formattedDate} ${formattedTime}</span>
+                                <span class="task-detail">🔄 ${getDifficultyText(task.difficulty)}</span>
+                            </div>
+                            ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
+                        </div>
+                        <div class="task-actions">
+                            <button class="task-action" onclick="toggleTaskStatus('${task.id}')">
+                                ${task.completed ? '↩️' : '✅'}
+                            </button>
+                            <button class="task-action" onclick="deleteTask('${task.id}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Cambiar estado de tarea (completada/pendiente)
+        function toggleTaskStatus(taskId) {
+            const task = state.tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                saveTasks();
+                renderTasks();
+                showNotification(`Tarea marcada como ${task.completed ? 'completada' : 'pendiente'}`);
+            }
+        }
+        
+        // Eliminar tarea
+        function deleteTask(taskId) {
+            state.tasks = state.tasks.filter(t => t.id !== taskId);
+            saveTasks();
+            renderTasks();
+            showNotification('Tarea eliminada correctamente');
+        }
+        
+        // Manejar cambios de filtro
+        function handleFilterChange() {
+            state.filter.subject = filterSubject.value;
+            renderTasks();
+        }
+        
+        // Manejar cambios de ordenamiento
+        function handleSortChange() {
+            state.sort = sortBy.value;
+            renderTasks();
+        }
+        
+        // Cambiar entre pestañas
+        function switchTab(tabName) {
+            state.filter.tab = tabName;
+            
+            // Actualizar clases de pestañas
+            tabs.forEach(tab => {
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            renderTasks();
+        }
+        
+        // Seleccionar prioridad
+        function selectPriority(priority) {
+            state.selectedPriority = priority;
+            document.getElementById('task-priority').value = priority;
+            
+            // Actualizar interfaz
+            document.querySelectorAll('.priority-option').forEach(option => {
+                if (option.dataset.priority === priority) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+        
+        // Mostrar notificación
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Programar notificación para una tarea
+        function scheduleNotification(task) {
+            // En una aplicación real, esto utilizaría servicios de notificación pero solamenmte aqui es simulacion okey 
+            // Aquí solo simularemos el cálculo del tiempo de alerta
+            
+            const taskDate = new Date(task.dateTime);
+            const now = new Date();
+            
+            // Calcular tiempo de anticipación basado en dificultad y prioridad
+            let daysInAdvance = 1; // Base: 1 día
+            
+            // Ajustar por dificultad
+            if (task.difficulty === 'hard') daysInAdvance += 2;
+            if (task.difficulty === 'medium') daysInAdvance += 1;
+            
+            // Ajustar por prioridad
+            if (task.priority === 'high') daysInAdvance += 1;
+            
+            // Simular registro de notificación
+            console.log(`Notificación programada para ${task.title}: ${daysInAdvance} días antes`);
+        }
+        
+        // Comprobar si hay notificaciones pendientes (simulación)
+        function checkNotifications() {
+            // En una aplicación real, esto se manejaría con un servicio de notificaciones
+            // Aquí simplemente comprobaremos si hay tareas próximas
+            
+            setTimeout(() => {
+                const upcomingTasks = getUpcomingTasks();
+                if (upcomingTasks.length > 0) {
+                    showNotification(`Tienes ${upcomingTasks.length} tareas próximas a vencer`);
+                }
+            }, 3000); // Mostrar después de 3 segundos para simular
+        }
+        
+        // Obtener tareas próximas a vencer (menos de 2 días)
+        function getUpcomingTasks() {
+            const now = new Date();
+            const twoDaysFromNow = new Date(now);
+            twoDaysFromNow.setDate(now.getDate() + 2);
+            
+            return state.tasks.filter(task => {
+                if (task.completed) return false;
+                const taskDate = new Date(task.dateTime);
+                return taskDate > now && taskDate <= twoDaysFromNow;
+            });
+        }
+        
+        // Comprobar si una tarea está próxima a vencer
+        function isTaskUrgent(task) {
+            if (task.completed) return false;
+            
+            const now = new Date();
+            const taskDate = new Date(task.dateTime);
+            const diffTime = taskDate - now;
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            
+            // Consideramos urgente si faltan menos de 2 días
+            return diffDays < 2 && diffDays > 0;
+        }
+        
+        // Traducir dificultad a texto
+        function getDifficultyText(difficulty) {
+            switch (difficulty) {
+                case 'easy': return 'Fácil';
+                case 'medium': return 'Media';
+                case 'hard': return 'Difícil';
+                default: return difficulty;
+            }
+        }
+        
+        // Verificar tareas próximas y mostrar notificaciones
+        function checkUpcomingTasks() {
+            const upcomingTasks = getUpcomingTasks();
+            if (upcomingTasks.length > 0) {
+                // Actualizar interfaz para destacar tareas urgentes
+            }
+        }
+        
+        // Añadir tareas de ejemplo para demostración
+        function addExampleTasks() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            
+            const nextWeek = new Date(now);
+            nextWeek.setDate(now.getDate() + 7);
+            
+            const examples = [
+                {
+                    id: '1',
+                    title: 'Ensayo de Literatura',
+                    subject: 'Español',
+                    dateTime: tomorrow.toISOString().slice(0, 16).replace('T', 'T'),
+                    priority: 'high',
+                    difficulty: 'hard',
+                    description: 'Ensayo sobre "Cien años de soledad" de Gabriel García Márquez',
+                    completed: false,
+                    createdAt: now.toISOString()
+                },
+                {
+                    id: '2',
+                    title: 'Ejercicios de Álgebra',
+                    subject: 'Matemáticas',
+                    dateTime: nextWeek.toISOString().slice(0, 16).replace('T', 'T'),
+                    priority: 'medium',
+                    difficulty: 'medium',
+                    description: 'Páginas 45-47 del libro de texto',
+                    completed: false,
+                    createdAt: now.toISOString()
+                }
+            ];
+            
+            state.tasks = examples;
+            saveTasks();    
+            renderTasks();
+        }
+    </script>
+</body>
+</html>
